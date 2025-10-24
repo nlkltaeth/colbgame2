@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TKSP Hive Builder | Colb Finance</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: #212121;
+            min-height: 100vh;
+            padding: 20px;
+            color: #FFFFFF;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .logo {
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 60px;
+            width: auto;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .game-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .panel {
+            background: #212121;
+            border: 2px solid #FFE41E;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(255, 228, 30, 0.2);
+        }
+
+        .stats-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .stat-box {
+            background: #FFE41E;
+            color: #212121;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-box h3 {
+            font-size: 0.9em;
+            opacity: 0.9;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-box .value {
+            font-size: 2em;
+            font-weight: bold;
+        }
+
+        .click-button {
+            width: 100%;
+            padding: 40px;
+            font-size: 1.5em;
+            font-weight: bold;
+            background: #FFE41E;
+            color: #212121;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: transform 0.1s, box-shadow 0.1s;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(255, 228, 30, 0.5);
+            position: relative;
+        }
+
+        .click-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 20px rgba(255, 228, 30, 0.7);
+        }
+
+        .click-button:active {
+            transform: translateY(0);
+            box-shadow: 0 3px 10px rgba(255, 228, 30, 0.5);
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 15px;
+            background: #212121;
+            border: 2px solid #FFE41E;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            color: #FFFFFF;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            background: #FFE41E;
+            color: #212121;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .tksp-item {
+            background: #2a2a2a;
+            border: 1px solid #FFE41E;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .tksp-info {
+            flex: 1;
+        }
+
+        .tksp-info h4 {
+            font-size: 1.1em;
+            margin-bottom: 5px;
+            color: #FFE41E;
+        }
+
+        .tksp-info p {
+            font-size: 0.9em;
+            color: #FFFFFF;
+            margin: 3px 0;
+        }
+
+        .tksp-owned {
+            font-weight: bold;
+            color: #FFE41E;
+        }
+
+        .buy-button {
+            padding: 12px 25px;
+            background: #FFE41E;
+            color: #212121;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .buy-button:hover:not(:disabled) {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(255, 228, 30, 0.5);
+        }
+
+        .buy-button:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .upgrade-item {
+            background: #2a2a2a;
+            border: 1px solid #FFE41E;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .upgrade-item h4 {
+            color: #FFE41E;
+            margin-bottom: 8px;
+        }
+
+        .upgrade-item p {
+            color: #FFFFFF;
+            margin-bottom: 12px;
+            font-size: 0.95em;
+        }
+
+        .upgrade-purchased {
+            color: #FFE41E;
+            font-weight: bold;
+        }
+
+        .auto-save-indicator {
+            text-align: center;
+            padding: 10px;
+            color: #FFE41E;
+            font-size: 0.9em;
+            opacity: 0.7;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .stat-item {
+            background: #2a2a2a;
+            border: 1px solid #FFE41E;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-item h4 {
+            color: #FFE41E;
+            font-size: 0.9em;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .stat-item .stat-value {
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+
+        .floating-number {
+            position: fixed;
+            color: #FFE41E;
+            font-weight: bold;
+            font-size: 1.5em;
+            pointer-events: none;
+            animation: float-up 1s ease-out forwards;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        @keyframes float-up {
+            0% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .game-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 1.8em;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="https://i.ibb.co/jjgBDRK/png-colb-white-with-text.webp" 
+                 alt="Colb Finance" 
+                 class="logo">
+            <h1>TKSP Hive Builder</h1>
+            <p>Build Your Tokenized RWA Portfolio on Moonbeam</p>
+        </div>
+
+        <div class="game-grid">
+            <!-- Left Panel - Stats -->
+            <div class="stats-panel">
+                <div class="stat-box">
+                    <h3>USC Balance</h3>
+                    <div class="value" id="usc-balance">0</div>
+                </div>
+                <div class="stat-box">
+                    <h3>Hive Yield/s</h3>
+                    <div class="value" id="per-second">0.0</div>
+                </div>
+                <div class="stat-box">
+                    <h3>Total Harvested</h3>
+                    <div class="value" id="total-earned">0</div>
+                </div>
+                <div class="stat-box">
+                    <h3>Portfolio NAV</h3>
+                    <div class="value" id="portfolio-value">0</div>
+                </div>
+                <div style="margin-top: 10px; text-align: center;">
+                    <img src="https://i.ibb.co/xqCBm2q6/1755333770841.webp" 
+                         alt="Colb Hive" 
+                         style="width: 100%; max-width: 300px; border-radius: 10px;">
+                </div>
+            </div>
+
+            <!-- Right Panel - Main Game -->
+            <div class="panel">
+                <button class="click-button" id="click-btn">
+                    Harvest USC from the Hive
+                </button>
+
+                <div class="tabs">
+                    <div class="tab active" data-tab="tksps">RWA Portfolio</div>
+                    <div class="tab" data-tab="upgrades">Protocol Upgrades</div>
+                    <div class="tab" data-tab="stats">Hive Stats</div>
+                </div>
+
+                <!-- TKSPs Tab -->
+                <div class="tab-content active" id="tksps-content">
+                    <!-- Dynamically generated -->
+                </div>
+
+                <!-- Upgrades Tab -->
+                <div class="tab-content" id="upgrades-content">
+                    <!-- Dynamically generated -->
+                </div>
+
+                <!-- Stats Tab -->
+                <div class="tab-content" id="stats-content">
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <h4>Total Harvests</h4>
+                            <div class="stat-value" id="total-clicks">0</div>
+                        </div>
+                        <div class="stat-item">
+                            <h4>Hive Uptime</h4>
+                            <div class="stat-value" id="play-time">0s</div>
+                        </div>
+                        <div class="stat-item">
+                            <h4>TKSPs Owned</h4>
+                            <div class="stat-value" id="tksp-count">0</div>
+                        </div>
+                        <div class="stat-item">
+                            <h4>Harvest Power</h4>
+                            <div class="stat-value" id="click-power">1</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="auto-save-indicator">
+                    Smart contract auto-saves your portfolio every 60 seconds
+                </div>
+                
+                <div style="margin-top: 20px; padding: 15px; background: #2a2a2a; border: 1px solid #FFE41E; border-radius: 10px; font-size: 0.85em;">
+                    <h4 style="color: #FFE41E; margin-bottom: 8px; text-align: center;">About Colb Finance</h4>
+                    <p style="margin-bottom: 8px;">
+                        <strong>Colb</strong> is a Swiss platform for tokenizing real-world assets (RWA) on Moonbeam blockchain.
+                    </p>
+                    <p style="margin-bottom: 8px;">
+                        <strong>TKSP</strong> (Tokenized Structured Products) framework creates CFT, CMT and CTT tokens 
+                        backed by real assets through bankruptcy-remote trust structure.
+                    </p>
+                    <p style="margin-bottom: 0;">
+                        <strong>USC</strong> is a Swiss stablecoin 1:1 to USD, fully backed by reserves in Swiss banks.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Game State
+        let gameState = {
+            usc: 0,
+            totalEarned: 0,
+            perSecond: 0,
+            clickPower: 1,
+            totalClicks: 0,
+            playTime: 0,
+            tksps: {
+                honeyJar: { owned: 0 },
+                goldenHive: { owned: 0 },
+                royalPollen: { owned: 0 },
+                queenVault: { owned: 0 },
+                hiveNetwork: { owned: 0 }
+            },
+            upgrades: {
+                workerBees: false,
+                bulkDiscount: false,
+                pollenBoost: false,
+                royalJelly: false,
+                moonbeamBridge: false,
+                clickMultiplier: false
+            }
+        };
+
+        // TKSP Types
+        const tkspTypes = {
+            honeyJar: {
+                name: 'Honey Jar CFT',
+                description: 'Colb Fund-linked Token tracking BlackRock World Tech Fund',
+                baseCost: 10,
+                baseIncome: 0.1,
+                costMultiplier: 1.15
+            },
+            goldenHive: {
+                name: 'Golden Hive CMT',
+                description: 'Colb Managed Token with Swiss wealth management strategies',
+                baseCost: 100,
+                baseIncome: 1,
+                costMultiplier: 1.15
+            },
+            royalPollen: {
+                name: 'Royal Pollen CTT',
+                description: 'Colb Tracker Token for pre-IPO equity (SpaceX, Stripe)',
+                baseCost: 1100,
+                baseIncome: 8,
+                costMultiplier: 1.15
+            },
+            queenVault: {
+                name: 'Queen Vault TKSP',
+                description: 'Premium RWA tokenization with bankruptcy-remote trust structure',
+                baseCost: 12000,
+                baseIncome: 47,
+                costMultiplier: 1.15
+            },
+            hiveNetwork: {
+                name: 'Hive Network Protocol',
+                description: 'Cross-chain TKSP on Moonbeam with XCM liquidity bridges',
+                baseCost: 130000,
+                baseIncome: 260,
+                costMultiplier: 1.15
+            }
+        };
+
+        // Upgrade Types
+        const upgradeTypes = {
+            workerBees: {
+                name: 'Worker Bees Auto-Harvest',
+                cost: 100,
+                effect: 'Deploy automated smart contracts - generates 10 USC/s passively'
+            },
+            bulkDiscount: {
+                name: 'Hive Bulk Purchase',
+                cost: 500,
+                effect: 'Volume discount from trust structure - all TKSPs cost 10% less'
+            },
+            pollenBoost: {
+                name: 'Pollen Oracle Network',
+                cost: 1000,
+                effect: 'Enhanced price feeds from Chainlink oracles - 2x all TKSP income'
+            },
+            royalJelly: {
+                name: 'Royal Jelly Settlement',
+                cost: 5000,
+                effect: 'Faster T+0 settlement on Moonbeam - 3x all TKSP income'
+            },
+            moonbeamBridge: {
+                name: 'Moonbeam XCM Bridge',
+                cost: 25000,
+                effect: 'Cross-chain liquidity via Polkadot XCM - 5x all TKSP income'
+            },
+            clickMultiplier: {
+                name: 'Swiss Trust Multiplier',
+                cost: 10000,
+                effect: 'Bankruptcy-remote trust structure - each click earns 5x USC'
+            }
+        };
+
+        // Save/Load
+        function saveGame() {
+            localStorage.setItem('colbTKSPClicker', JSON.stringify(gameState));
+        }
+
+        function loadGame() {
+            const saved = localStorage.getItem('colbTKSPClicker');
+            if (saved) {
+                try {
+                    const loadedState = JSON.parse(saved);
+                    
+                    // Безопасное слияние сохраненных данных с дефолтными
+                    gameState.usc = loadedState.usc || 0;
+                    gameState.totalEarned = loadedState.totalEarned || 0;
+                    gameState.perSecond = loadedState.perSecond || 0;
+                    gameState.clickPower = loadedState.clickPower || 1;
+                    gameState.totalClicks = loadedState.totalClicks || 0;
+                    gameState.playTime = loadedState.playTime || 0;
+                    
+                    // Загрузка TKSP с проверкой на существование
+                    if (loadedState.tksps) {
+                        Object.keys(gameState.tksps).forEach(key => {
+                            if (loadedState.tksps[key]) {
+                                gameState.tksps[key].owned = loadedState.tksps[key].owned || 0;
+                            }
+                        });
+                    }
+                    
+                    // Загрузка апгрейдов с проверкой на существование
+                    if (loadedState.upgrades) {
+                        Object.keys(gameState.upgrades).forEach(key => {
+                            gameState.upgrades[key] = loadedState.upgrades[key] || false;
+                        });
+                    }
+                } catch (e) {
+                    console.error('Error loading save:', e);
+                    // Если ошибка загрузки - используем дефолтное состояние
+                }
+            }
+        }
+
+        // Calculate TKSP cost
+        function getTKSPCost(type, owned) {
+            const base = tkspTypes[type].baseCost;
+            const multiplier = Math.pow(tkspTypes[type].costMultiplier, owned);
+            const discount = gameState.upgrades.bulkDiscount ? 0.9 : 1;
+            return Math.floor(base * multiplier * discount);
+        }
+
+        // Calculate income multiplier
+        function getIncomeMultiplier() {
+            let multiplier = 1;
+            if (gameState.upgrades.pollenBoost) multiplier *= 2;
+            if (gameState.upgrades.royalJelly) multiplier *= 3;
+            if (gameState.upgrades.moonbeamBridge) multiplier *= 5;
+            return multiplier;
+        }
+
+        // Calculate per second income
+        function calculatePerSecond() {
+            let total = 0;
+            const multiplier = getIncomeMultiplier();
+            
+            Object.keys(tkspTypes).forEach(key => {
+                const owned = gameState.tksps[key].owned;
+                const baseIncome = tkspTypes[key].baseIncome;
+                total += owned * baseIncome * multiplier;
+            });
+
+            if (gameState.upgrades.workerBees) {
+                total += 10;
+            }
+
+            return total;
+        }
+
+        // Calculate click power
+        function getClickPower() {
+            let power = 1;
+            if (gameState.upgrades.clickMultiplier) power *= 5;
+            return power;
+        }
+
+        // Format numbers
+        function formatNumber(num) {
+            if (num >= 1000000) {
+                return (num / 1000000).toFixed(2) + 'M';
+            } else if (num >= 1000) {
+                return (num / 1000).toFixed(2) + 'K';
+            }
+            return Math.floor(num).toLocaleString();
+        }
+
+        // Show floating number
+        function showFloatingNumber(value, x, y) {
+            const elem = document.createElement('div');
+            elem.className = 'floating-number';
+            elem.textContent = '+' + formatNumber(value);
+            elem.style.left = x + 'px';
+            elem.style.top = y + 'px';
+            document.body.appendChild(elem);
+            
+            setTimeout(() => {
+                elem.remove();
+            }, 1000);
+        }
+
+        // Show notification
+        function showNotification(message) {
+            const btn = document.getElementById('save-btn');
+            const originalText = btn.textContent;
+            btn.textContent = message;
+            setTimeout(() => {
+                btn.textContent = originalText;
+            }, 1500);
+        }
+
+        // Click handler
+        document.getElementById('click-btn').addEventListener('click', (e) => {
+            const earned = getClickPower();
+            gameState.usc += earned;
+            gameState.totalEarned += earned;
+            gameState.totalClicks++;
+            gameState.clickPower = getClickPower();
+            
+            showFloatingNumber(earned, e.clientX, e.clientY);
+            updateDisplay(true);
+        });
+
+        // Buy TKSP
+        function buyTKSP(type) {
+            const owned = gameState.tksps[type].owned;
+            const cost = getTKSPCost(type, owned);
+            
+            if (gameState.usc >= cost) {
+                gameState.usc -= cost;
+                gameState.tksps[type].owned++;
+                gameState.perSecond = calculatePerSecond();
+                updateDisplay(true);
+                renderTKSPs();
+            }
+        }
+
+        // Buy Upgrade
+        function buyUpgrade(type) {
+            const upgrade = upgradeTypes[type];
+            
+            if (!gameState.upgrades[type] && gameState.usc >= upgrade.cost) {
+                gameState.usc -= upgrade.cost;
+                gameState.upgrades[type] = true;
+                gameState.perSecond = calculatePerSecond();
+                gameState.clickPower = getClickPower();
+                updateDisplay(true);
+                renderUpgrades();
+            }
+        }
+
+        // Render TKSPs
+        function renderTKSPs() {
+            const container = document.getElementById('tksps-content');
+            container.innerHTML = '';
+            
+            Object.keys(tkspTypes).forEach(key => {
+                const tksp = tkspTypes[key];
+                const owned = gameState.tksps[key].owned;
+                const cost = getTKSPCost(key, owned);
+                const income = tksp.baseIncome * getIncomeMultiplier();
+                
+                const canAfford = gameState.usc >= cost;
+                
+                const item = document.createElement('div');
+                item.className = 'tksp-item';
+                item.innerHTML = `
+                    <div class="tksp-info">
+                        <h4>${tksp.name}</h4>
+                        <p>${tksp.description}</p>
+                        <p>Income: <strong>${income.toFixed(1)}/s</strong></p>
+                        <p class="tksp-owned">Owned: ${owned}</p>
+                    </div>
+                    <button class="buy-button" ${!canAfford ? 'disabled' : ''} onclick="buyTKSP('${key}')">
+                        Buy ${formatNumber(cost)} USC
+                    </button>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        // Render Upgrades
+        function renderUpgrades() {
+            const container = document.getElementById('upgrades-content');
+            container.innerHTML = '';
+            
+            Object.keys(upgradeTypes).forEach(key => {
+                const upgrade = upgradeTypes[key];
+                const purchased = gameState.upgrades[key];
+                const canAfford = gameState.usc >= upgrade.cost;
+                
+                const item = document.createElement('div');
+                item.className = 'upgrade-item';
+                item.innerHTML = `
+                    <h4>${upgrade.name}</h4>
+                    <p>${upgrade.effect}</p>
+                    ${purchased ? 
+                        '<p class="upgrade-purchased">Purchased</p>' :
+                        `<button class="buy-button" ${!canAfford ? 'disabled' : ''} onclick="buyUpgrade('${key}')">
+                            Buy ${formatNumber(upgrade.cost)} USC
+                        </button>`
+                    }
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        // Update display
+        function updateDisplay(forceRender = false) {
+            document.getElementById('usc-balance').textContent = formatNumber(gameState.usc);
+            document.getElementById('per-second').textContent = gameState.perSecond.toFixed(1);
+            document.getElementById('total-earned').textContent = formatNumber(gameState.totalEarned);
+            
+            let portfolioValue = 0;
+            Object.keys(tkspTypes).forEach(key => {
+                const owned = gameState.tksps[key].owned;
+                const cost = getTKSPCost(key, owned - 1);
+                portfolioValue += owned * cost;
+            });
+            document.getElementById('portfolio-value').textContent = formatNumber(portfolioValue);
+            
+            document.getElementById('total-clicks').textContent = gameState.totalClicks;
+            document.getElementById('play-time').textContent = Math.floor(gameState.playTime) + 's';
+            
+            const tkspCount = Object.values(gameState.tksps).reduce((sum, t) => sum + t.owned, 0);
+            document.getElementById('tksp-count').textContent = tkspCount;
+            document.getElementById('click-power').textContent = gameState.clickPower;
+            
+            if (forceRender) {
+                renderTKSPs();
+                renderUpgrades();
+            }
+        }
+
+        // Tab switching
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                
+                tab.classList.add('active');
+                const tabName = tab.dataset.tab;
+                document.getElementById(tabName + '-content').classList.add('active');
+            });
+        });
+
+        // Game loop
+        setInterval(() => {
+            gameState.usc += gameState.perSecond / 10;
+            gameState.totalEarned += gameState.perSecond / 10;
+            gameState.playTime += 0.1;
+            updateDisplay(false);
+        }, 100);
+        
+        // Periodic button update (every 2 seconds to check affordability)
+        setInterval(() => {
+            renderTKSPs();
+            renderUpgrades();
+        }, 2000);
+
+        // Auto-save every 60 seconds
+        setInterval(saveGame, 60000);
+
+        // Initialize game
+        loadGame();
+        gameState.perSecond = calculatePerSecond();
+        gameState.clickPower = getClickPower();
+        renderTKSPs();
+        renderUpgrades();
+        updateDisplay();
+    </script>
+</body>
+</html>
